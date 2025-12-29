@@ -32,10 +32,10 @@
 
 #### iidx-like
 
-- [ ] 新结算界面：beatoraja 结算页面下的三个图表
+- [x] 新结算界面：beatoraja 结算页面下的三个图表 <https://youtu.be/DhfmOhBDf0I>
 - [ ] beatoraja 占位零：`PF: 0194` 里面的 `0` 可见度调低点
   - 不实现理由：一张 om 谱可能有 10k+ notes，但是 iidx 谱面只有 10k-
-- [ ] `判定傾向`：平均误差
+- [x] `判定傾向`：平均误差 <https://youtu.be/DhfmOhBDf0I>
 - [ ] `MAX-`, `SS-`, ...
 
 #### etterna
