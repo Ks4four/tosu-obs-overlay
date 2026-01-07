@@ -37,6 +37,7 @@
   - 不实现理由：一张 om 谱可能有 10k+ notes，但是 iidx 谱面只有 10k-
 - [x] `判定傾向`：平均误差 <https://youtu.be/DhfmOhBDf0I>
 - [ ] `MAX-`, `SS-`, ...
+- [ ] 数字血量
 
 #### etterna
 
