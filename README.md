@@ -207,3 +207,7 @@ graph TB
     G -.->|需要时可外部推理| I
 
 ```
+
+# lazer 哲学
+
+we get what we deserve
