@@ -162,7 +162,7 @@ Etterna 可以推测谱面类型。没看过它的实现，因为 std 模式更�
 - [ ] 3. 推理（`FastAPI`/`AutoModel` + `AutoProcessor`/`Flask`）
 - [ ] 4. 中间件
 - [ ] 5. 模型部署（`onnxruntime`, Node.js）
-- [ ] 6. 前端（Node.js）
+- [ ] 6. 前端（Node.js, tosu）
 - [ ] 7. 缓存（`Redis`）
 
 粗略的工作流如下。
