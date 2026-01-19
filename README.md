@@ -159,11 +159,11 @@ Etterna 可以推测谱面类型。没看过它的实现，因为 std 模式更�
 - [ ] 0. 等待 User tags（<https://osu.ppy.sh/wiki/en/Beatmap/Beatmap_tags>）成为事实标准
 - [ ] 1. 准备训练数据（[Osynicite/osynic_serializer](https://github.com/Osynicite/osynic_serializer) + [Osynicite/osynic_downloader](https://github.com/Osynicite/osynic_downloader), 还有自己弄的 api 获取对应 tags 的 beatmaps）
 - [ ] 2. 训练（[OliBomby/CM3P](https://github.com/OliBomby/CM3P)）
-- [ ] 2. 推理（`FastAPI`/`AutoModel` + `AutoProcessor`/`Flask`）
-- [ ] 3. 中间件
-- [ ] 4. 模型部署（`onnxruntime`, Node.js）
-- [ ] 5. 前端（Node.js）
-- [ ] 6. 缓存（`Redis`）
+- [ ] 3. 推理（`FastAPI`/`AutoModel` + `AutoProcessor`/`Flask`）
+- [ ] 4. 中间件
+- [ ] 5. 模型部署（`onnxruntime`, Node.js）
+- [ ] 6. 前端（Node.js）
+- [ ] 7. 缓存（`Redis`）
 
 粗略的工作流如下。
 
