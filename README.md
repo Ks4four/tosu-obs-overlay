@@ -158,10 +158,55 @@ Etterna 可以推测谱面类型。没看过它的实现，因为 std 模式更�
 
 - [ ] 0. 等待 User tags（<https://osu.ppy.sh/wiki/en/Beatmap/Beatmap_tags>）成为事实标准
 - [ ] 1. 准备训练数据（[Osynicite/osynic_serializer](https://github.com/Osynicite/osynic_serializer) + [Osynicite/osynic_downloader](https://github.com/Osynicite/osynic_downloader), 还有自己弄的 api 获取对应 tags 的 beatmaps）
-- [ ] 2. 训练（<https://github.com/OliBomby/CM3P>）
-- [ ] 2. 推理（`FastAPI`, `AutoModel` + `AutoProcessor`, `Flask`）
-- [ ] 3. 中间件（<https://axios-http.com/>）
+- [ ] 2. 训练（[OliBomby/CM3P](https://github.com/OliBomby/CM3P)）
+- [ ] 2. 推理（`FastAPI`/`AutoModel` + `AutoProcessor`/`Flask`）
+- [ ] 3. 中间件
 - [ ] 4. 模型部署（`onnxruntime`, Node.js）
 - [ ] 5. 前端（Node.js）
 - [ ] 6. 缓存（`Redis`）
 
+粗略的工作流如下。
+
+```mermaid
+graph TB
+    subgraph "前端"
+        A[玩家在选歌界面]
+        B[overlay 显示谱面 tags]
+    end
+    
+    subgraph "胶水"
+        C[Node.js/TypeScript]
+        D[Node.js/Express]
+    end
+    
+    subgraph "tagger"
+        E[用 CM3P 输出向量和推理]
+        F[Redis]
+    end
+    
+    subgraph "db"
+        G[ /Songs/\*/*.osu ]
+        H[SQLite/PostgreSQL]
+    end
+    
+    subgraph "外部推理"
+        I[OsynicSerializer + CM3P]
+    end
+    
+    A -->|tosu| C
+    C <-->|getBeatmapOsuFile| D
+    D <-->|WebSocket| B
+    
+    D -->|谱面 .osu| E
+    E -->|tags| D
+    
+    E <-->|查询/存储| F
+    E -->|谱面 .osu| G
+    
+    I -->|批量处理| E
+    I -->|存储 tags| H
+    E <-->|查询/存储| H
+    
+    G -.->|需要时可外部推理| I
+
+```
