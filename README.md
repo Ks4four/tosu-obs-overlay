@@ -2,49 +2,24 @@
 
 ## Judgments
 
-### standard
+判定实际上是一种确定语义色的活。目前 ppy 在这上面做的功夫就是标准化。我对此有不同看法，并且我想使用 <https://github.com/Ks4four/moe-palettes-ksfour>。
 
-| 判定 |
-| :--- |
-| 300 |
-| 100 |
-| 50 |
-| Miss |
+### 存值
 
-### taiko
+在 stable，ppy 采用已有的计数器来存值，而不是各个 mode 都有独立的存值。
 
-| 判定 | 数值 / 描述 |
-| :--- | :--- |
-| 良 | 300 |
-| 可 | 100 |
-| 不可 | Miss |
-| Geki 和 Katu | 大 note |
+| 判定 | Standard | Taiko | Catch | Mania |
+| :--- | :--- | :--- | :--- | :--- |
+| Geki (激) | Combo 结尾（300） | 大饼（良） | Combo 结尾 | 320 (MAX) |
+| 300 | 300 | 良 | Fruits | 300 |
+| Katu (喝) | Combo 结尾 （100） | 大饼（可） | Missed Droplets | 200 |
+| 100 | 100 | 可 | Drops | 100 |
+| 50 | 50 | - | Droplets | 50 |
+| Miss | Miss | 不可 | Missed Fruits & Drops | Miss |
 
-### catch
+### 配色
 
-| 对象 | 数值 / 描述 |
-| :--- | :--- |
-| fruits | 300 |
-| drops | 100 |
-| droplets | 50 |
-| missed fruits and drops | 0 |
-| missed droplets | katu |
-| geki | 是有值的，还是 combo 结尾，和 standard 一样。 |
-
-### mania
-
-| 数值 | 对应 |
-| :--- | :--- |
-| 320 | geki = MAX |
-| 300 | 300 |
-| 200 | katu |
-| 100 | 100 |
-| 50 | 50 |
-| Miss | Miss |
-
-## osu! mania
-
-| 数值 | 颜色 |
+| osu! mania | 颜色 |
 | :--- | :--- |
 | 320 | 彩色 |
 | 300 | 金色 |
@@ -53,18 +28,14 @@
 | 50 | 灰色 |
 | 0 | 红色 |
 
-## lazer! standard
-
-| 数值 | 颜色 |
+| lazer! standard | 颜色 |
 | :--- | :--- |
 | 300 | 明蓝色 |
 | 200 | 暗绿色 |
 | 50 | 黄色 |
 | 0 | 红色 |
 
-## lazer! mania
-
-| 数值 | 颜色 |
+| lazer! mania | 颜色 |
 | :--- | :--- |
 | 320 | 明蓝色 |
 | 300 | 暗蓝色 |
@@ -73,11 +44,9 @@
 | 50 | 黄色 |
 | 0 | 红色 |
 
-## SM5
 
-<https://github.com/stepmania/stepmania/blob/d55acb1ba26f1c5b5e3048d6d6c0bd116625216f/Themes/default/Graphics/Judgment%20Normal%202x6.png>
 
-| 判定 | 颜色 |
+|  SM5 | 颜色 |
 | :--- | :--- |
 | flawless | 明蓝色 |
 | perfect | 金色 |
@@ -86,9 +55,9 @@
 | bad | 紫色 |
 | miss | 红色 |
 
-## iidx 31
+SM5 可参看：<https://github.com/stepmania/stepmania/blob/d55acb1ba26f1c5b5e3048d6d6c0bd116625216f/Themes/default/Graphics/Judgment%20Normal%202x6.png>。
 
-| 判定 | 颜色 / 描述 |
+| iidx 31 | 颜色 |
 | :--- | :--- |
 | pg | 青色 |
 | gr | 金色 |
@@ -119,6 +88,8 @@
 
 ## 灵感
 
+许多实现是我后来发现没什么用的，所以就不用 TODO List 了。
+
 ### standard
 
 - [x] focus session：最开始就是为 std 设计的，只是后来给其他模式用上了
@@ -132,18 +103,19 @@
 #### iidx-like
 
 - [x] 新结算界面：beatoraja 结算页面下的三个图表 <https://youtu.be/DhfmOhBDf0I>
-- [ ] beatoraja 占位零：`PF: 0194` 里面的 `0` 可见度调低点
-  - 不实现理由：一张 om 谱可能有 10k+ notes，但是 iidx 谱面只有 10k-
 - [x] `判定傾向`：平均误差 <https://youtu.be/DhfmOhBDf0I>
-- [ ] `MAX-`, `SS-`, ...
 - [ ] 数字血量
+- beatoraja 占位零：`PF: 0194` 里面的 `0` 可见度调低点
+  - 不实现理由：一张 om 谱可能有 10k+ notes，但是 iidx 谱面只有 10k-
+- `MAX-`, `SS-`, ...
 
 #### etterna
 
-- [ ] flags/cleartypes
-- [ ] grades 动画（不停 rolling，最后 rolling 到真的等级）
-  - 不实现理由：osu! 的评级并不是黑箱，不过实现起来非常简单，无所谓
 - [ ] 新结算界面：散点图
+- flags/cleartypes
+  - 不实现理由：感觉没什么人在意
+- grades 动画（不停 rolling，最后 rolling 到真的等级）
+  - 不实现理由：osu! 的评级并不是黑箱，不过实现起来非常简单，无所谓
 
 ### catch
 
@@ -164,6 +136,7 @@
 1. fail 动画：播放一个 mp4，然后使用 canva 滤除蓝幕。gif 是备选项。搜索「iidx 閉店演出」。
 2. 结算动画：可以做评分的动画，也可以做 flags/cleartypes 的动画（比如 fc）。立刻可以工作的方案有两种：Stepmania 3.9 滚动的评分，和进度条样式（lazer! 做了）。
 3. 画面切り替え：玩家在不同界面中切换时（除了暂停，因为暂停不算独立的界面）播放动画。这个很有可能效果不好，因为它有体感延迟（无法处理）。
+4. 直接照抄各种游戏的 layout，这需要各个游戏的 assets。我是懒得弄，不过纯网页的上限很高，不至于不能做。
 
 ## 推测地图模型
 
