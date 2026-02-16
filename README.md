@@ -202,9 +202,10 @@ SM5 可参看：<https://github.com/stepmania/stepmania/blob/d55acb1ba26f1c5b5e3
 
 一个更好的问题是，一个更好的问题究竟是由谁提出的，而谁提出的问题是否是一个更好的问题并不是一个更好的问题。
 
-# 推测地图模型
+# 推测地图类型
 
-*此目标为 tosu-obs-overlay 的支线任务。*
+- 此目标为 tosu-obs-overlay 的支线任务。
+- 此目标为**基础设施**。
 
 Etterna 可以推测谱面类型。没看过它的实现，因为 std 模式更重要一点。对现有工具进行猜测：
 
@@ -221,9 +222,13 @@ Etterna 可以推测谱面类型。没看过它的实现，因为 std 模式更�
 
 我希望有一个下载 Beatmap sets 之后删除其余 beatmap (chart/diff/file) 的功能。目前现有的工具似乎还做不到。
 
+## 推测玩家喜欢的谱面
+
+这个是最实际的。我们现在有 CM3P，所以只需要随便搞几十张图，然后训练出向量就完事了。
+
 # Booru-like previewing in web
 
-*此目标为 tosu-obs-overlay 的支线任务。*
+- 此目标为 tosu-obs-overlay 的支线任务。
 
 这游戏十几年了，我还是不懂为什么不能预览谱面，这可能是因为滑条数学吧。无论如何，从零手搓似乎复杂度不高。
 
