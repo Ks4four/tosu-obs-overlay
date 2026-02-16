@@ -218,9 +218,7 @@ Etterna 可以推测谱面类型。没看过它的实现，因为 std 模式更�
 - 6. 前端（Node.js, tosu）
 - 7. 缓存（`Redis`）
 
-目前阶段卡在 0.，因为 **Beatmap** tags 只用在了 **Beatmap sets** 上。我不知道为什么开发者要搞混这两个，我以为 tags 会像 Booru-like 那样。事实上没有。不过我可以跳过这步，但是那样要么就要手动标注，要么就组织标注。但是我并不是一个社区人士，所以我放弃了。
-
-我希望有一个下载 Beatmap sets 之后删除其余 beatmap (chart/diff/file) 的功能。目前现有的工具似乎还做不到。
+目前阶段卡在 0.。我希望有一个下载 Beatmap sets 之后删除其余 beatmap (chart/diff/file) 的功能。目前现有的工具似乎还做不到。
 
 ## 推测玩家喜欢的谱面
 
