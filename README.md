@@ -202,37 +202,157 @@ SM5 可参看：<https://github.com/stepmania/stepmania/blob/d55acb1ba26f1c5b5e3
 
 一个更好的问题是，一个更好的问题究竟是由谁提出的，而谁提出的问题是否是一个更好的问题并不是一个更好的问题。
 
-# 推测地图类型
+# tagger
+
+首先明确一点：`.osu` 谱面的变化本质上是连续的。所以归类被我认为不可能。当然玩家可以说一个图是大跳，一个图是死串，但是我觉得 `.osu` 和别的文件（字面意义的 `Files`）一样，是 tag 组成的，而不是被归类，故能做一 tagger。
 
 - 此目标为 tosu-obs-overlay 的支线任务。
-- 此目标为**基础设施**。
+- 此目标为 **基础设施**。起码在 txt2img 有这个玩意。
+- 此目标利用神经系统，而非符号系统。符号系统的一个例子如 <https://github.com/Leinadix/companella>（仅 mania 的 4 keys）。
+- 此目标有许多思路实现，但是各有 trade-off。
 
-Etterna 可以推测谱面类型。没看过它的实现，因为 std 模式更重要一点。对现有工具进行猜测：
+> [!WARNING]
+> 确保你的目的是「标注谱面」（Dev 路线），而不是将它作为手段，即「我标注谱面就是为了能找到我喜欢的谱！」；对于此种用户，建议[直接训练小样本](#推测玩家喜欢的谱面)。
 
-- [ ] 0. 等待 User tags（<https://osu.ppy.sh/wiki/en/Beatmap/Beatmap_tags>）成为事实标准
+## 思路：LoRA 类
+
+由于思维惯性，我的最初设想是对每个 tag 训练一个 LoRA 之类的东西，然后推理出向量，看与哪个 LoRA 最近。
+
+找了几个工具，流程设想如下。
+
+- 0. 等待 User tags（<https://osu.ppy.sh/wiki/en/Beatmap/Beatmap_tags>）成为事实标准
 - 1. 准备训练数据（[Osynicite/osynic_serializer](https://github.com/Osynicite/osynic_serializer) + [Osynicite/osynic_downloader](https://github.com/Osynicite/osynic_downloader), 还有自己弄的 api 获取对应 tags 的 beatmaps）
 - 2. 训练（[OliBomby/CM3P](https://github.com/OliBomby/CM3P)）
-- 3. 推理（`FastAPI`/`AutoModel` + `AutoProcessor`/`Flask`）
+- 3. 推理（`FastAPI`/`AutoModel` + `AutoProcessor`/`Flask`）及其服务
 - 4. 中间件
 - 5. 模型部署（`onnxruntime`, Node.js）
 - 6. 前端（Node.js, tosu）
 - 7. 缓存（`Redis`）
 
-目前阶段卡在 0.。我希望有一个下载 Beatmap sets 之后删除其余 beatmap (chart/diff/file) 的功能。目前现有的工具似乎还做不到。
+目前阶段卡在 0.。由于它是 **基础设施**，again，需要在设计上正确。我不敢下手。
 
-## 推测玩家喜欢的谱面
+## 思路：聚类
 
-这个是最实际的。我们现在有 CM3P，所以只需要随便搞几十张图，然后训练出向量就完事了。
+```diff
++ 已落地。聚类思路已完全实现。
+```
+
+[LoRA 类思路](#思路lora-类)需要发动社区标注，但是我懒得搞。后来重看 CM3P 的文档发现它已经有一个预训练 embedding 了，那我之前还在干嘛，原来还要自己拼是吧。
+
+思路就是对所需的谱面进行推理，然后推理出向量以后，搞聚类，聚 50 个（人话：找 50 个和它最像的谱面），然后对 50 个进行查询 tags，最后就能推出它大致是什么谱面了。形象点的说，<https://github.com/OliBomby/CM3P?tab=readme-ov-file#2-beatmap-embedding-explorer> 的图中展示了 embedding 空间（二维的）。我只要先推理 `artist - song title (mapper) [diff name].osu` 在这个图中的什么位置，然后再找离它近的 50 个谱面，最后问问查询这 50 个被标注什么；然后让这 50 个谱面对 `artist - song title (mapper) [diff name].osu` 进行投票，觉得长得和自己像的就投一票，最后算个分数出来就 ok 了。
+
+### 所需工具
+
+- 下载 (https://huggingface.co/datasets/OliBomby/CM3P-Embeddings-244K) 244K ranked 谱面的预计算 embedding 数据集
+- osu! API v2 的 `GET /beatmapsets/{id}` 端点返回 `related_tags` 字段，即社区投票的 user tags
+- `resources/tags.json` 定义了 ~100 种官方 tag（`aim/jump`、`skillset/tech`、`style/clean` 等）
+
+### 聚类推理流程
+
+```mermaid
+flowchart TD
+    A["输入 .osu 文件"] --> B["提取 embedding"]
+    B --> C["Cosine 搜索，取 top-K 邻居（默认 K=50）"]
+    C --> D["对每个邻居的 BeatmapSetId 调 osu! API 拉 `related_tags` + 本地 JSON 缓存（同一 beatmapset 只拉一次）"]
+    D --> E["按 Cosine 加权聚合所有邻居的 tags"]
+    E --> F["输出排名前 20 的预测 tag + 分数"]
+```
+
+### 细节
+
+天然地实现了如下细节。这里搞点 jargon 社交一下 lol。
+
+- 按需工作：每次查询只拉 top-K 邻居的 tag（去重后通常 30-40 个 beatmapset），然后还有本地缓存，你查询一次了，如果撞见第二次就不用再查询了（对于不同的图概率可能有些小）
+- 去重工作：同一 beatmapset 的多个难度出现在邻居中时，tags 只计一次，避免重复投票
+- 权重分配：Cosine 越高，该邻居的 tags 权重越大；这比简单多数投票更准确
+- 无训练：我不知道算不算一个优点，但是其完全利用 CM3P 预训练的 embedding 和社区已有的 tag 数据，也就是说这个思路用 human 量是挺大的
+
+### trade-off
+
+依赖社区 tag 覆盖率。如果邻居里没几个被打过 tag，结果就不可靠。目前好像没别的缺点。
+
+## 思路：探针
+
+利用 CM3P 已有的两个 tower 对比学习来做 CLIP。beatmap tower 和 metadata tower 在预训练阶段就通过对比损失对齐到同一个 512 维空间了，所以我们直接用。
+
+### 流程
+
+1. 对每个 tag，构造一个"探针" metadata 输入：其他字段全填 `[*_UNK]`，只填 `[TAG_xxx]`
+2. 通过元数据 tower 编码，得到该 tag 在共享空间里的 512 维向量
+3. 对新谱面，通过谱面 tower 编码，得到谱面向量
+4. 计算谱面向量与所有 tag 向量的 Cosine
+5. 排名 = 预测结果
+
+```mermaid
+flowchart TD
+    A["每个 tag 编码为 [BOS] [DIFFICULTY_UNK] [YEAR_UNK] ... [TAG_aim/jump] [EOS]"] --> B["metadata tower"]
+    B --> C["512 维 tag 向量"]
+    C --> D["cosine(beatmap_embed, tag_embed)"]
+```
+
+### 思考
+
+优点就是不用标注，也没有 API 调用；tag 向量只算一次就能复用。推理极快，只用乘一个矩阵。问题是元数据 tower 训练时看到的是完整 metadata（difficulty + year + mapper + tags + ...），只填 tag 其余全 `UNK` 属于 `OOD`（分布外）输入。还有 tag 信息能否被模型解缠出来，取决于对比训练的质量。
+
+实现起来不难，只需要写一个脚本构造探针输入，跑一遍元数据 tower。
+
+## 思路：冻结
+
+在 pretrained embedding 上训练一个小型多标签分类器。这相当于造轮子，所以简单讲一下。
+
+### 流程
+
+1. 用 osu! API 批量拉取 244K 谱面的 tags
+2. 构建训练数据：`X = 512 维 embedding`，`Y = 多标签 0/1 向量`
+3. 训练一个 logistic regression 或两层 MLP（sklearn / PyTorch 均可，CPU 几分钟搞定）
+4. 推理：新谱面 → CM3P embedding → 过分类器 → sigmoid → 输出 tag 概率
+
+优点就是比 k-NN 更准确，有 tag 边界，而不是靠邻居投票；快，只要做一次 forward；模型估计会很小。缺点就是要一次性拉取 244K 谱面，而且如果新增了 tag，又要重新训练。
+
+实现起来不难，但是实际难度就在拉取数据上。
+
+## 思路：端到端
+
+CM3P 代码库已经内置了分类头 `CM3PForBeatmapClassification`，且原生支持 `multi_label_classification`（使用 `BCEWithLogitsLoss`）。
+
+### 流程
+
+1. 用 osu! API 批量拉取 244K 谱面的 tags
+2. HACK: `configs/train/v7_classifier.yaml`：
+   - `problem_type: "multi_label_classification"`
+   - `num_labels: <tag 数量>`
+   - `from_pretrained: "OliBomby/CM3P"`
+3. 构建数据集：label 为 float 多标签向量
+4. GPU fine-tuning（分类头是一个 `nn.Linear(768, num_labels)`，beatmap tower 可选冻结）
+
+这么做优点是质量最高，这已经是基础设施在上建筑的级别了；能学到 embedding 里分类器学不到的细微模式。缺点就是需要重新训练、需要 tag 数据、然后要搭建环境（训练流程比较重要）。如果新增了 tag，也要重新训练。
+
+实现难度是所有思路最高的。但是基础设施全部都有，不失一种手段。
+
+## 冷知识
+
+对于 txt2img 用户，大可以将小样本训练理解成 LoRA，而将大样本训练理解成 Checkpoint。这两个东西的应用场景的比喻，逻辑上对得上，但是从原理上看，LoRA 修改了模型权重，生成的时候就和 Checkpoint 融合了。我这里做的是 image retrieval，和融合没什么关系。
+
+如果非要做成 LoRA 一样的东西，那可以起个名字叫 per-user adapter fine-tuning。和 txt2img 一样，这么做，过拟合是最常见的问题。但是 txt2img 使用者并不在乎，他们只要 `lora:0.3` 就够了。
+
+# 推测玩家喜欢的谱面
+
+这个是最能让玩家受益的。我们现在有 CM3P，所以只需要随便搞几十张图，然后训练出向量就完事了。目前还没心情弄这个。
 
 # Booru-like previewing in web
 
 - 此目标为 tosu-obs-overlay 的支线任务。
+- 此目标为 **基础设施**。预览谱面现在只有 <https://github.com/minetoblend/osucad> 对 standard 工作。
 
 这游戏十几年了，我还是不懂为什么不能预览谱面，这可能是因为滑条数学吧。无论如何，从零手搓似乎复杂度不高。
 
 我打算做一个 Booru 一样的网站实例（而不是真的可行网站）。左边是 tags，右边是谱面预览。谱面预览一定要能按时间滑动。
 
 理论上可以纯静态实现。动态只是方便添加 tags 和 beatmaps。但是我不在乎。
+
+- [ ] 解析 `.osu`
+- [ ] 渲染
+- 检索系统：ez
 
 # lazer 哲学
 
