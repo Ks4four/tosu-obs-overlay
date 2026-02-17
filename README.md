@@ -339,6 +339,10 @@ CM3P 代码库已经内置了分类头 `CM3PForBeatmapClassification`，且原�
 
 这个是最能让玩家受益的。我们现在有 CM3P，所以只需要随便搞几十张图，然后训练出向量就完事了。目前还没心情弄这个。
 
+# 推测谱面段位（Dan）
+
+可能可以研究出一种向量，将任何谱面（不只是 mania 谱面）说成某种段位的水平。目前想不出怎么实现。
+
 # Booru-like previewing in web
 
 - 此目标为 tosu-obs-overlay 的支线任务。
