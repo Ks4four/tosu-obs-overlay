@@ -1,5 +1,8 @@
 # Skin
 
+![alt text](https://img.shields.io/badge/Type-Application-blue)
+![alt text](https://img.shields.io/badge/Status-Rolling-blue)
+
 ## Elements
 
 研究一下怎么设计模块（AKA 轮子），from code 来生成一个 Skin。概念出自 Iosevka。
@@ -117,6 +120,9 @@ SM5 可参看：<https://github.com/stepmania/stepmania/blob/d55acb1ba26f1c5b5e3
 
 # tosu-obs-overlay
 
+![alt text](https://img.shields.io/badge/Type-Application-blue)
+![alt text](https://img.shields.io/badge/Status-Rolling-blue)
+
 给朋友做的 tosu obs overlay。
 
 ## 目标
@@ -139,7 +145,7 @@ SM5 可参看：<https://github.com/stepmania/stepmania/blob/d55acb1ba26f1c5b5e3
 
 ### standard
 
-- [x] focus session：最开始就是为 std 设计的，只是后来给其他模式用上了
+- [x] focus session ![alt text](https://img.shields.io/badge/Type-Application-blue) ![alt text](https://img.shields.io/badge/Status-Stable-green)：最开始就是为 std 设计的，只是后来给其他模式用上了
 
 ### taiko
 
@@ -149,8 +155,8 @@ SM5 可参看：<https://github.com/stepmania/stepmania/blob/d55acb1ba26f1c5b5e3
 
 #### iidx-like
 
-- [x] 新结算界面：beatoraja 结算页面下的三个图表 <https://youtu.be/DhfmOhBDf0I>
-- [x] `判定傾向`：平均误差 <https://youtu.be/DhfmOhBDf0I>
+- [x] 新结算界面 ![alt text](https://img.shields.io/badge/Type-Infrastructure-purple) ![alt text](https://img.shields.io/badge/Status-Unstable-orange)：beatoraja 结算页面下的三个图表 <https://youtu.be/DhfmOhBDf0I>
+- [x] `判定傾向` ![alt text](https://img.shields.io/badge/Type-Application-blue) ![alt text](https://img.shields.io/badge/Status-Unstable-orange)：平均误差 <https://youtu.be/DhfmOhBDf0I>
 - [ ] 数字血量
 - beatoraja 占位零：`PF: 0194` 里面的 `0` 可见度调低点
   - 不实现理由：一张 om 谱可能有 10k+ notes，但是 iidx 谱面只有 10k-
@@ -187,6 +193,8 @@ SM5 可参看：<https://github.com/stepmania/stepmania/blob/d55acb1ba26f1c5b5e3
 
 ### 程序
 
+![alt text](https://img.shields.io/badge/Status-Cooked-red)
+
 我的推流现在全是 learn bait，点进去一看又是老生常谈话题就为了换个名词解释。为了好玩，这里收集一些套话。如果你有意让你的项目变得更好（营销上的），可以参看。
 
 | 类 | 问题 | 包含着 |
@@ -204,6 +212,8 @@ SM5 可参看：<https://github.com/stepmania/stepmania/blob/d55acb1ba26f1c5b5e3
 
 # tagger
 
+![Type](https://img.shields.io/badge/Type-Infrastructure-purple)
+
 首先明确一点：`.osu` 谱面的变化本质上是连续的。所以归类被我认为不可能。当然玩家可以说一个图是大跳，一个图是死串，但是我觉得 `.osu` 和别的文件（字面意义的 `Files`）一样，是 tag 组成的，而不是被归类，故能做一 tagger。
 
 - 此目标为 tosu-obs-overlay 的支线任务。
@@ -215,6 +225,12 @@ SM5 可参看：<https://github.com/stepmania/stepmania/blob/d55acb1ba26f1c5b5e3
 > 确保你的目的是「标注谱面」（Dev 路线），而不是将它作为手段，即「我标注谱面就是为了能找到我喜欢的谱！」；对于此种用户，建议[直接训练小样本](#推测玩家喜欢的谱面)。
 
 ## 思路：LoRA 类
+
+![alt text](https://img.shields.io/badge/Strategy-Canonical-Green)
+![alt text](https://img.shields.io/badge/Status-Stuck-red)
+
+> [!TIP]
+> 此思路为标准的**正攻**。
 
 由于思维惯性，我的最初设想是对每个 tag 训练一个 LoRA 之类的东西，然后推理出向量，看与哪个 LoRA 最近。
 
@@ -233,9 +249,8 @@ SM5 可参看：<https://github.com/stepmania/stepmania/blob/d55acb1ba26f1c5b5e3
 
 ## 思路：聚类
 
-```diff
-+ 已落地。聚类思路已完全实现。
-```
+![alt text](https://img.shields.io/badge/Strategy-Workaround-yellow)
+![alt text](https://img.shields.io/badge/Status-Done-success)
 
 [LoRA 类思路](#思路lora-类)需要发动社区标注，但是我懒得搞。后来重看 CM3P 的文档发现它已经有一个预训练 embedding 了，那我之前还在干嘛，原来还要自己拼是吧。
 
@@ -273,6 +288,9 @@ flowchart TD
 
 ## 思路：探针
 
+![alt text](https://img.shields.io/badge/Strategy-Workaround-yellow)
+![alt text](https://img.shields.io/badge/Status-Text%20Only-lightgrey)
+
 利用 CM3P 已有的两个 tower 对比学习来做 CLIP。beatmap tower 和 metadata tower 在预训练阶段就通过对比损失对齐到同一个 512 维空间了，所以我们直接用。
 
 ### 流程
@@ -298,6 +316,9 @@ flowchart TD
 
 ## 思路：冻结
 
+![alt text](https://img.shields.io/badge/Strategy-Workaround-yellow)
+![alt text](https://img.shields.io/badge/Status-Text%20Only-lightgrey)
+
 在 pretrained embedding 上训练一个小型多标签分类器。这相当于造轮子，所以简单讲一下。
 
 ### 流程
@@ -313,7 +334,13 @@ flowchart TD
 
 ## 思路：端到端
 
+![alt text](https://img.shields.io/badge/Strategy-End--to--End-blueviolet)
+![alt text](https://img.shields.io/badge/Status-Text%20Only-lightgrey)
+
 CM3P 代码库已经内置了分类头 `CM3PForBeatmapClassification`，且原生支持 `multi_label_classification`（使用 `BCEWithLogitsLoss`）。
+
+> [!TIP]
+> 此思路为**正攻**。
 
 ### 流程
 
@@ -337,22 +364,38 @@ CM3P 代码库已经内置了分类头 `CM3PForBeatmapClassification`，且原�
 
 # 推测玩家喜欢的谱面
 
+![alt text](https://img.shields.io/badge/Type-Application-blue)
+![alt text](https://img.shields.io/badge/Status-Text%20Only-lightgrey)
+
 这个是最能让玩家受益的。我们现在有 CM3P，所以只需要随便搞几十张图，然后训练出向量就完事了。目前还没心情弄这个。
 
 # 推测谱面段位（Dan）
 
+![alt text](https://img.shields.io/badge/Type-Application-blue)
+![alt text](https://img.shields.io/badge/Status-Text%20Only-lightgrey)
+
 可能可以研究出一种向量，将任何谱面（不只是 mania 谱面）说成某种段位的水平。目前想不出怎么实现。
 
-# Booru-like previewing in web
+# Previewing in web
+
+![alt text](https://img.shields.io/badge/Type-Infrastructure-purple)
+![alt text](https://img.shields.io/badge/Status-In%20Progress-blue)
 
 - 此目标为 tosu-obs-overlay 的支线任务。
 - 此目标为 **基础设施**。预览谱面现在只有 <https://github.com/minetoblend/osucad> 对 standard 工作。
 
 这游戏十几年了，我还是不懂为什么不能预览谱面，这可能是因为滑条数学吧。无论如何，从零手搓似乎复杂度不高。
 
-我打算做一个 Booru 一样的网站实例（而不是真的可行网站）。左边是 tags，右边是谱面预览。谱面预览一定要能按时间滑动。
+## Booru-like website
+
+![alt text](https://img.shields.io/badge/Type-Application-blue)
+![alt text](https://img.shields.io/badge/Status-In%20Progress-blue)
+
+我打算做一个 Booru 一样的网站。左边是 tags，右边是谱面预览。谱面预览一定要能按时间滑动。
 
 理论上可以纯静态实现。动态只是方便添加 tags 和 beatmaps。但是我不在乎。
+
+现有工具使用 <https://github.com/rr-/szurubooru>。
 
 - [ ] 解析 `.osu`
 - [ ] 渲染
