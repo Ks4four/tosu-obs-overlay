@@ -1,3 +1,7 @@
+# osu-things
+
+有时候我在想，我可能只是历史学得比较好，而对编程一无所知
+
 # Skin
 
 ![alt text](https://img.shields.io/badge/Type-Application-blue)
@@ -69,54 +73,17 @@
 
 ### 配色
 
-| osu! mania | 颜色 |
-| :--- | :--- |
-| 320 | 彩色 |
-| 300 | 金色 |
-| 200 | 绿色 |
-| 100 | 蓝色 |
-| 50 | 灰色 |
-| 0 | 红色 |
+| 判定逻辑等级 | osu! mania | lazer! standard | lazer! mania | SM5 | iidx 31 |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| 最高 | 320：彩色 | 300：明蓝色 | 320：明蓝色 | flawless：明蓝色 | pg：青色 |
+| 次高 | 300：金色 | - | 300：暗蓝色 | perfect：金色 | gr：金色 |
+| 中高 | 200：绿色 | 200：暗绿色 | 200：明绿色 | great：绿色 | gd：暗黄色 |
+| 中低| 100：蓝色 | - | 100：暗绿色 | good：暗蓝色 | bd：暗橙色 |
+| 低 | 50：灰色 | 50：黄色 | 50：黄色 | bad：紫色 | pr：深红色 |
+| 断 | 0：红色 | 0：红色 | 0：红色 | miss：红色 | cb：外围是红色的白色 |
+| Timing | - | - | - | - | fast：亮蓝色 / slow：亮红色 |
 
-| lazer! standard | 颜色 |
-| :--- | :--- |
-| 300 | 明蓝色 |
-| 200 | 暗绿色 |
-| 50 | 黄色 |
-| 0 | 红色 |
-
-| lazer! mania | 颜色 |
-| :--- | :--- |
-| 320 | 明蓝色 |
-| 300 | 暗蓝色 |
-| 200 | 明绿色 |
-| 100 | 暗绿色 |
-| 50 | 黄色 |
-| 0 | 红色 |
-
-
-
-|  SM5 | 颜色 |
-| :--- | :--- |
-| flawless | 明蓝色 |
-| perfect | 金色 |
-| great | 绿色 |
-| good | 暗蓝色 |
-| bad | 紫色 |
-| miss | 红色 |
-
-SM5 可参看：<https://github.com/stepmania/stepmania/blob/d55acb1ba26f1c5b5e3048d6d6c0bd116625216f/Themes/default/Graphics/Judgment%20Normal%202x6.png>。
-
-| iidx 31 | 颜色 |
-| :--- | :--- |
-| pg | 青色 |
-| gr | 金色 |
-| gd | 暗黄色 |
-| bd | 暗橙色 |
-| pr | 深红色 |
-| cb | 外围是红色的白色 |
-| fast | 亮蓝色 |
-| slow | 亮红色 |
+SM5 也可参看：<https://github.com/stepmania/stepmania/blob/d55acb1ba26f1c5b5e3048d6d6c0bd116625216f/Themes/default/Graphics/Judgment%20Normal%202x6.png>。
 
 # tosu-obs-overlay
 
