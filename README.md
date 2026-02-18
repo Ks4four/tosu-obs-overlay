@@ -345,7 +345,7 @@ CM3P 代码库已经内置了分类头 `CM3PForBeatmapClassification`，且原�
 ### 流程
 
 1. 用 osu! API 批量拉取 244K 谱面的 tags
-2. HACK: `configs/train/v7_classifier.yaml`：
+2. ![alt text](https://img.shields.io/badge/Strategy-HACK-red): `configs/train/v7_classifier.yaml`：
    - `problem_type: "multi_label_classification"`
    - `num_labels: <tag 数量>`
    - `from_pretrained: "OliBomby/CM3P"`
