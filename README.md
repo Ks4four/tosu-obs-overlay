@@ -184,22 +184,23 @@ SM5 也可参看：<https://github.com/stepmania/stepmania/blob/d55acb1ba26f1c5b
 首先明确一点：`.osu` 谱面的变化本质上是连续的。所以归类被我认为不可能。当然玩家可以说一个图是大跳，一个图是死串，但是我觉得 `.osu` 和别的文件（字面意义的 `Files`）一样，是 tag 组成的，而不是被归类，故能做一 tagger。
 
 - 此目标为 tosu-obs-overlay 的支线任务。
-- 此目标为 **基础设施**。起码在 txt2img 有这个玩意。
+- 此目标应该为 **基础设施**。起码在 txt2img 有这个玩意。
 - 此目标利用神经系统，而非符号系统。符号系统的一个例子如 <https://github.com/Leinadix/companella>（仅 mania 的 4 keys）。
 - 此目标有许多思路实现，但是各有 trade-off。
 
 > [!WARNING]
 > 确保你的目的是「标注谱面」（Dev 路线），而不是将它作为手段，即「我标注谱面就是为了能找到我喜欢的谱！」；对于此种用户，建议[直接训练小样本](#推测玩家喜欢的谱面)。
 
-## 思路：LoRA 类
+## 思路：距离
 
+![Type](https://img.shields.io/badge/Type-Infrastructure-purple)
 ![alt text](https://img.shields.io/badge/Strategy-Canonical-Green)
 ![alt text](https://img.shields.io/badge/Status-Stuck-red)
 
 > [!TIP]
 > 此思路为标准的**正攻**。
 
-由于思维惯性，我的最初设想是对每个 tag 训练一个 LoRA 之类的东西，然后推理出向量，看与哪个 LoRA 最近。
+由于思维惯性，我的最初设想是对每个 tag 训练一个小的 embeddings，然后用输入文件推理出向量，看与哪个类别的 embeddings 最近。
 
 找了几个工具，流程设想如下。
 
@@ -214,8 +215,9 @@ SM5 也可参看：<https://github.com/stepmania/stepmania/blob/d55acb1ba26f1c5b
 
 目前阶段卡在 0.。由于它是 **基础设施**，again，需要在设计上正确。我不敢下手。
 
-## 思路：聚类
+## 思路：k-NN
 
+![alt text](https://img.shields.io/badge/Type-Application-blue)
 ![alt text](https://img.shields.io/badge/Strategy-Workaround-yellow)
 ![alt text](https://img.shields.io/badge/Status-Done-success)
 
@@ -251,10 +253,11 @@ flowchart TD
 
 ### trade-off
 
-依赖社区 tag 覆盖率。如果邻居里没几个被打过 tag，结果就不可靠。目前好像没别的缺点。
+依赖社区 tag 覆盖率。如果邻居里没几个被打过 tag，结果就不可靠。还有一个缺点是如果这么做了，只是一种应用 ![alt text](https://img.shields.io/badge/Type-Application-blue)，而不是基础设施了。
 
 ## 思路：探针
 
+![alt text](https://img.shields.io/badge/Type-Application-blue)
 ![alt text](https://img.shields.io/badge/Strategy-Workaround-yellow)
 ![alt text](https://img.shields.io/badge/Status-Text%20Only-lightgrey)
 
@@ -283,6 +286,7 @@ flowchart TD
 
 ## 思路：冻结
 
+![Type](https://img.shields.io/badge/Type-Infrastructure-purple)
 ![alt text](https://img.shields.io/badge/Strategy-Workaround-yellow)
 ![alt text](https://img.shields.io/badge/Status-Text%20Only-lightgrey)
 
@@ -301,6 +305,7 @@ flowchart TD
 
 ## 思路：端到端
 
+![Type](https://img.shields.io/badge/Type-Infrastructure-purple)
 ![alt text](https://img.shields.io/badge/Strategy-End--to--End-blueviolet)
 ![alt text](https://img.shields.io/badge/Status-Text%20Only-lightgrey)
 
@@ -352,6 +357,10 @@ CM3P 代码库已经内置了分类头 `CM3PForBeatmapClassification`，且原�
 - 此目标为 **基础设施**。预览谱面现在只有 <https://github.com/minetoblend/osucad> 对 standard 工作。
 
 这游戏十几年了，我还是不懂为什么不能预览谱面，这可能是因为滑条数学吧。无论如何，从零手搓似乎复杂度不高。
+
+## 遇到的困难
+
+不知道怎么部署存储。
 
 ## Booru-like website
 
