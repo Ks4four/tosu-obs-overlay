@@ -177,6 +177,20 @@ SM5 也可参看：<https://github.com/stepmania/stepmania/blob/d55acb1ba26f1c5b
 
 一个更好的问题是，一个更好的问题究竟是由谁提出的，而谁提出的问题是否是一个更好的问题并不是一个更好的问题。
 
+# CM3P 模型
+
+![Type](https://img.shields.io/badge/Type-Infrastructure-purple)
+
+> [!CAUTION]
+> 此行为曾被社区**反对**。
+
+偶然看到了 <https://huggingface.co/datasets/project-riz/osu-beatmaps>，感觉数据集格式不错。*仅仅只是*因为这个原因，我打算重新训练。方案有二：
+
+1. 「事后打补丁」：训练一个通用模型，然后再微调出 4 个 mode 模型
+2. 「设计上正确」：直接训练 4 个独立的 mode 模型
+
+纠结一下，最后决定两个方案一起弄，这样就不用纠结了。而且我很可能也看不出效果。
+
 # tagger
 
 ![Type](https://img.shields.io/badge/Type-Infrastructure-purple)
