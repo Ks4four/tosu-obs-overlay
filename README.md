@@ -160,6 +160,8 @@ SM5 也可参看：<https://github.com/stepmania/stepmania/blob/d55acb1ba26f1c5b
 3. 画面切り替え：玩家在不同界面中切换时（除了暂停，因为暂停不算独立的界面）播放动画。这个很有可能效果不好，因为它有体感延迟（无法处理）。
 4. 直接照抄各种游戏的 layout，这需要各个游戏的 assets。我是懒得弄，不过纯网页的上限很高，不至于不能做。
 
+无论做何种设计，我认为「想到什么就做什么」是一个好主意，而不是像现在我这样参考 MD2 + MD3。除非你想免于品味的责任，不然标准化是完全不必要的。比如说[铃兰](https://prts.wiki/w/%E9%93%83%E5%85%B0) layout 就应该有[铃兰](https://prts.wiki/w/%E9%93%83%E5%85%B0)的样子，而[铃兰](https://prts.wiki/w/%E9%93%83%E5%85%B0) layout 的样子每个人的解释都不同。有些人喜欢[铃兰](https://prts.wiki/w/%E9%93%83%E5%85%B0)的这个元素，有些人喜欢[铃兰](https://prts.wiki/w/%E9%93%83%E5%85%B0)的那个元素，然后再根据[铃兰](https://prts.wiki/w/%E9%93%83%E5%85%B0)的这个和那个元素作为主体去做。总之这种东西我感觉一定要「设计上正确」，而不是事后打补丁，用 MD3 几个 widget 然后后面贴着几个[铃兰](https://prts.wiki/w/%E9%93%83%E5%85%B0)的图片。
+
 ### 程序
 
 ![alt text](https://img.shields.io/badge/Status-Cooked-red)
