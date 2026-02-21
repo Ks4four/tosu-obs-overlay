@@ -2,6 +2,8 @@
 
 有时候我在想，我可能只是历史学得比较好，而对编程一无所知
 
+---
+
 # Skin
 
 ![alt text](https://img.shields.io/badge/Type-Application-blue)
@@ -177,7 +179,15 @@ SM5 也可参看：<https://github.com/stepmania/stepmania/blob/d55acb1ba26f1c5b
 
 一个更好的问题是，一个更好的问题究竟是由谁提出的，而谁提出的问题是否是一个更好的问题并不是一个更好的问题。
 
-# CM3P 模型
+---
+
+# ML
+
+Danbooru 到被拉取训练 ckpt 花费了很多年。但是 ppy 发布 User tags 功能（<https://github.com/ppy/osu/discussions/32568>，~2025-05-25）距离 CM3P 的 init（<https://github.com/OliBomby/CM3P/commit/c7ec92fd01f9a91ee0377f9ec46c5fa5d485f70c>，2025-08-10）只过了非常短的时间。我写下这句话的时间是 2026-02-22。在这种情况下，围绕 osu! 做的 ML 工作还处在基础设施阶段。OliBomby 做了一个作图器，呃，应该叫大数据作图吧，然后就被社区喷烂（<https://x.com/OliBomby/status/1923460291284677068>）。
+
+与此同时，我的一些朋友想打「好玩的 tech」的图，却还是要问人。这种行为对厌倦人类（好吧，或者说社区；「不混圈」）的人并不友好。他们只能去下各种 collections，即使这些 collections 不知为何里面有大跳和死串，而不是 reading，或者 aim control，这对他们的挫败感和心理健康都不好。然后我在想，如果说做一个 tagger，那就直接解决问题了吧。但是 tagger 需要有人 tag，而我又不可能发动社区说大家都来 tag。我只能用投机取巧的方式去弄，毕竟总不能怪社区的 tag 不够吧。所以我们正处在一个既使用了社区力量又被社区讨厌而目标是逃离社区的地带，但是这中间没有任何悖论。一个人被讨厌和他有没有做错事在逻辑上没有关系，就像你去玩一个音乐游戏和社区没有关系一样，只是说社区*倾向于*它们之间有联系。我有时在想，我是否需要训练来做一个 tagger，只是为了达到「我想玩我喜欢的图」的目的，就像为了开心地玩一个音乐游戏，却要和许多不认识的人搞好关系一样。
+
+## CM3P 模型
 
 ![Type](https://img.shields.io/badge/Type-Infrastructure-purple)
 
@@ -191,7 +201,7 @@ SM5 也可参看：<https://github.com/stepmania/stepmania/blob/d55acb1ba26f1c5b
 
 纠结一下，最后决定两个方案一起弄，这样就不用纠结了。而且我很可能也看不出效果。
 
-# tagger
+## tagger
 
 ![Type](https://img.shields.io/badge/Type-Infrastructure-purple)
 
@@ -205,7 +215,7 @@ SM5 也可参看：<https://github.com/stepmania/stepmania/blob/d55acb1ba26f1c5b
 > [!WARNING]
 > 确保你的目的是「标注谱面」（Dev 路线），而不是将它作为手段，即「我标注谱面就是为了能找到我喜欢的谱！」；对于此种用户，建议[直接训练小样本](#推测玩家喜欢的谱面)。
 
-## 思路：距离
+### 思路：距离
 
 ![Type](https://img.shields.io/badge/Type-Infrastructure-purple)
 ![alt text](https://img.shields.io/badge/Strategy-Canonical-Green)
@@ -213,6 +223,9 @@ SM5 也可参看：<https://github.com/stepmania/stepmania/blob/d55acb1ba26f1c5b
 
 > [!TIP]
 > 此思路为标准的**正攻**。
+
+> [!WARNING]
+> 这个路线到处是缺点。
 
 由于思维惯性，我的最初设想是对每个 tag 训练一个小的 embeddings，然后用输入文件推理出向量，看与哪个类别的 embeddings 最近。
 
@@ -229,24 +242,24 @@ SM5 也可参看：<https://github.com/stepmania/stepmania/blob/d55acb1ba26f1c5b
 
 目前阶段卡在 0.。由于它是 **基础设施**，again，需要在设计上正确。我不敢下手。
 
-## 思路：k-NN
+### 思路：k-NN
 
 ![alt text](https://img.shields.io/badge/Type-Application-blue)
 ![alt text](https://img.shields.io/badge/Strategy-Workaround-yellow)
 ![alt text](https://img.shields.io/badge/Status-Done-success)
 
-[LoRA 类思路](#思路lora-类)需要发动社区标注，但是我懒得搞。后来重看 CM3P 的文档发现它已经有一个预训练 embedding 了，那我之前还在干嘛，原来还要自己拼是吧。
+[LoRA 类思路](#思路：lora-类)需要发动社区标注，但是我懒得搞。后来重看 CM3P 的文档发现它已经有一个预训练 embedding 了，那我之前还在干嘛，原来还要自己拼是吧。
 
 思路就是对所需的谱面推理出向量以后，找 100 个和它最像的谱面，然后对这 100 个谱面进行查询 tags，最后就能推出它大致是什么谱面了。
 
-### 所需工具
+#### 所需工具
 
 - 下载 embeddings (https://huggingface.co/datasets/OliBomby/CM3P-Embeddings-244K)
 - osu! API v2 的 `GET /beatmapsets/{id}` 端点返回 `related_tags` 字段，即社区投票的 user tags
 - `resources/tags.json` 定义了 ~100 种官方 tag（`aim/jump`、`skillset/tech`、`style/clean` 等）
 - 设计脚本：找出邻居、获取标签、计算分数；这三个要分开设计，因为这三个都有对应的参数（比如，邻居取 50 还是 100？标签是否要并发获取？分数的算法？）
 
-### 聚类推理流程
+#### 聚类推理流程
 
 ```mermaid
 flowchart TD
@@ -257,7 +270,7 @@ flowchart TD
     E --> F["输出预测 tag + 分数"]
 ```
 
-### 细节
+#### 细节
 
 天然地实现了如下细节。这里搞点 jargon 社交一下 lol。
 
@@ -266,11 +279,11 @@ flowchart TD
 - 权重分配：Cosine 越高，该邻居的 tags 权重越大；这比简单多数投票更准确
 - 无训练：我不知道算不算一个优点，但是其完全利用 CM3P 预训练的 embedding 和社区已有的 tag 数据，也就是说这个思路用 human 量是挺大的
 
-### trade-off
+#### trade-off
 
 依赖社区 tag 覆盖率。如果邻居里没几个被打过 tag，结果就不可靠。还有一个缺点是如果这么做了，只是一种应用 ![alt text](https://img.shields.io/badge/Type-Application-blue)，而不是基础设施了。
 
-## 思路：探针
+### 思路：探针
 
 ![alt text](https://img.shields.io/badge/Type-Application-blue)
 ![alt text](https://img.shields.io/badge/Strategy-Workaround-yellow)
@@ -278,7 +291,7 @@ flowchart TD
 
 利用 CM3P 已有的两个 tower 对比学习来做 CLIP。beatmap tower 和 metadata tower 在预训练阶段就通过对比损失对齐到同一个 512 维空间了，所以我们直接用。
 
-### 流程
+#### 流程
 
 1. 对每个 tag，构造一个"探针" metadata 输入：其他字段全填 `[*_UNK]`，只填 `[TAG_xxx]`
 2. 通过元数据 tower 编码，得到该 tag 在共享空间里的 512 维向量
@@ -293,13 +306,13 @@ flowchart TD
     C --> D["cosine(beatmap_embed, tag_embed)"]
 ```
 
-### 思考
+#### 思考
 
 优点就是不用标注，也没有 API 调用；tag 向量只算一次就能复用。推理极快，只用乘一个矩阵。问题是元数据 tower 训练时看到的是完整 metadata（difficulty + year + mapper + tags + ...），只填 tag 其余全 `UNK` 属于 `OOD`（分布外）输入。还有 tag 信息能否被模型解缠出来，取决于对比训练的质量。
 
 实现起来不难，只需要写一个脚本构造探针输入，跑一遍元数据 tower。
 
-## 思路：冻结
+### 思路：冻结
 
 ![Type](https://img.shields.io/badge/Type-Infrastructure-purple)
 ![alt text](https://img.shields.io/badge/Strategy-Workaround-yellow)
@@ -307,7 +320,7 @@ flowchart TD
 
 在 pretrained embedding 上训练一个小型多标签分类器。这相当于造轮子，所以简单讲一下。
 
-### 流程
+#### 流程
 
 1. 用 osu! API 批量拉取 244K 谱面的 tags
 2. 构建训练数据：`X = 512 维 embedding`，`Y = 多标签 0/1 向量`
@@ -318,7 +331,7 @@ flowchart TD
 
 实现起来不难，但是实际难度就在拉取数据上。
 
-## 思路：端到端
+### 思路：端到端
 
 ![Type](https://img.shields.io/badge/Type-Infrastructure-purple)
 ![alt text](https://img.shields.io/badge/Strategy-End--to--End-blueviolet)
@@ -329,7 +342,7 @@ CM3P 代码库已经内置了分类头 `CM3PForBeatmapClassification`，且原�
 > [!TIP]
 > 此思路为**正攻**。
 
-### 流程
+#### 流程
 
 1. 用 osu! API 批量拉取 244K 谱面的 tags
 2. ![alt text](https://img.shields.io/badge/Strategy-HACK-red): `configs/train/v7_classifier.yaml`：
@@ -343,27 +356,27 @@ CM3P 代码库已经内置了分类头 `CM3PForBeatmapClassification`，且原�
 
 实现难度是所有思路最高的。但是基础设施全部都有，不失一种手段。
 
-## 冷知识
+### 冷知识
 
 对于 txt2img 用户，大可以将小样本训练理解成 LoRA，而将大样本训练理解成 Checkpoint。这两个东西的应用场景的比喻，逻辑上对得上，但是从原理上看，LoRA 修改了模型权重，生成的时候就和 Checkpoint 融合了。我这里做的是 image retrieval，和融合没什么关系。
 
 如果非要做成 LoRA 一样的东西，那可以起个名字叫 per-user adapter fine-tuning。和 txt2img 一样，这么做，过拟合是最常见的问题。但是 txt2img 使用者并不在乎，他们只要 `lora:0.3` 就够了。
 
-# 推测玩家喜欢的谱面
+## 推测玩家喜欢的谱面
 
 ![alt text](https://img.shields.io/badge/Type-Application-blue)
 ![alt text](https://img.shields.io/badge/Status-Text%20Only-lightgrey)
 
 这个是最能让玩家受益的。我们现在有 CM3P，所以只需要随便搞几十张图，然后训练出向量就完事了。目前还没心情弄这个。
 
-# 推测谱面段位（Dan）
+## 推测谱面段位（Dan）
 
 ![alt text](https://img.shields.io/badge/Type-Application-blue)
 ![alt text](https://img.shields.io/badge/Status-Text%20Only-lightgrey)
 
 可能可以研究出一种向量，将任何谱面（不只是 mania 谱面）说成某种段位的水平。目前想不出怎么实现。
 
-# Previewing in web
+## Previewing in web
 
 ![alt text](https://img.shields.io/badge/Type-Infrastructure-purple)
 ![alt text](https://img.shields.io/badge/Status-In%20Progress-blue)
@@ -373,11 +386,11 @@ CM3P 代码库已经内置了分类头 `CM3PForBeatmapClassification`，且原�
 
 这游戏十几年了，我还是不懂为什么不能预览谱面，这可能是因为滑条数学吧。无论如何，从零手搓似乎复杂度不高。
 
-## 遇到的困难
+### 遇到的困难
 
 不知道怎么部署存储。
 
-## Booru-like website
+### Booru-like website
 
 ![alt text](https://img.shields.io/badge/Type-Application-blue)
 ![alt text](https://img.shields.io/badge/Status-In%20Progress-blue)
@@ -391,6 +404,8 @@ CM3P 代码库已经内置了分类头 `CM3PForBeatmapClassification`，且原�
 - [ ] 解析 `.osu`
 - [ ] 渲染
 - 检索系统：ez
+
+---
 
 # lazer 哲学
 
