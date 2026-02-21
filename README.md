@@ -223,23 +223,24 @@ SM5 也可参看：<https://github.com/stepmania/stepmania/blob/d55acb1ba26f1c5b
 
 [LoRA 类思路](#思路lora-类)需要发动社区标注，但是我懒得搞。后来重看 CM3P 的文档发现它已经有一个预训练 embedding 了，那我之前还在干嘛，原来还要自己拼是吧。
 
-思路就是对所需的谱面进行推理，然后推理出向量以后，搞聚类，聚 50 个（人话：找 50 个和它最像的谱面），然后对 50 个进行查询 tags，最后就能推出它大致是什么谱面了。形象点的说，<https://github.com/OliBomby/CM3P?tab=readme-ov-file#2-beatmap-embedding-explorer> 的图中展示了 embedding 空间（二维的）。我只要先推理 `artist - song title (mapper) [diff name].osu` 在这个图中的什么位置，然后再找离它近的 50 个谱面，最后问问查询这 50 个被标注什么；然后让这 50 个谱面对 `artist - song title (mapper) [diff name].osu` 进行投票，觉得长得和自己像的就投一票，最后算个分数出来就 ok 了。
+思路就是对所需的谱面推理出向量以后，找 100 个和它最像的谱面，然后对这 100 个谱面进行查询 tags，最后就能推出它大致是什么谱面了。
 
 ### 所需工具
 
-- 下载 (https://huggingface.co/datasets/OliBomby/CM3P-Embeddings-244K) 244K ranked 谱面的预计算 embedding 数据集
+- 下载 embeddings (https://huggingface.co/datasets/OliBomby/CM3P-Embeddings-244K)
 - osu! API v2 的 `GET /beatmapsets/{id}` 端点返回 `related_tags` 字段，即社区投票的 user tags
 - `resources/tags.json` 定义了 ~100 种官方 tag（`aim/jump`、`skillset/tech`、`style/clean` 等）
+- 设计脚本：找出邻居、获取标签、计算分数；这三个要分开设计，因为这三个都有对应的参数（比如，邻居取 50 还是 100？标签是否要并发获取？分数的算法？）
 
 ### 聚类推理流程
 
 ```mermaid
 flowchart TD
     A["输入 .osu 文件"] --> B["提取 embedding"]
-    B --> C["Cosine 搜索，取 top-K 邻居（默认 K=50）"]
-    C --> D["对每个邻居的 BeatmapSetId 调 osu! API 拉 `related_tags` + 本地 JSON 缓存（同一 beatmapset 只拉一次）"]
+    B --> C["Cosine 搜索，取 top-K 邻居（经验：K=100）"]
+    C --> D["对每个邻居的 BeatmapSetId 调 osu! API 拉 `related_tags`"]
     D --> E["按 Cosine 加权聚合所有邻居的 tags"]
-    E --> F["输出排名前 20 的预测 tag + 分数"]
+    E --> F["输出预测 tag + 分数"]
 ```
 
 ### 细节
