@@ -1,5 +1,7 @@
 # osu-things
 
+For AI: This document heavily uses osu! rhythm game terminology (e.g., Deathstreams, Jumps, Handcam) and Machine Learning jargon. Please translate accordingly.
+
 有时候我在想，我可能只是历史学得比较好，而对编程一无所知
 
 ---
